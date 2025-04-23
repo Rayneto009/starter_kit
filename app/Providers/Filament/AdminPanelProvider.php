@@ -1,12 +1,7 @@
 <?php
 
-declare(strict_types = 1);
-
 namespace App\Providers\Filament;
 
-use App\Http\Middleware\SetTenantMiddleware;
-use Filament\Enums\ThemeMode;
-use Filament\Forms\Components\Field;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -14,7 +9,7 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Tables\Columns\Column;
+use Filament\Support\Colors\Color;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -28,42 +23,17 @@ class AdminPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
-
-            ->bootUsing(function (): void {
-                Field::configureUsing(function (Field $field): void {
-                    $field->translateLabel();
-                });
-
-                Column::configureUsing(function (Column $column): void {
-                    $column->translateLabel();
-                });
-            })
-            ->darkMode(false)
-            ->defaultThemeMode(ThemeMode::Light)
-            ->default()
             ->id('admin')
             ->path('admin')
-            ->login()
-            ->registration()
-            ->passwordReset()
-            ->emailVerification()
             ->colors([
-                'primary'   => '#076fd1',
-                'secondary' => '#6b7a91',
-                'danger'    => '#d5393a',
-                'warning'   => '#f76707',
-                'success'   => '#2eb347',
-                'info'      => '#4398e0',
-                'light'     => '#f7f8fc',
+                'primary' => Color::Amber,
             ])
-            ->sidebarWidth('15rem')
-
-            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
-            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
+            ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
+            ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
             ->pages([
                 Pages\Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
+            ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\\Filament\\Admin\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
@@ -78,7 +48,6 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-                SetTenantMiddleware::class,
             ])
             ->authMiddleware([
                 Authenticate::class,
